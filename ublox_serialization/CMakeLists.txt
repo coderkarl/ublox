@@ -1,8 +1,9 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 2.8.3)
 
 project(ublox_serialization)
 
 find_package(catkin REQUIRED COMPONENTS roscpp roscpp_serialization)
+catkin_metapackage()
 
 catkin_package(
   INCLUDE_DIRS include

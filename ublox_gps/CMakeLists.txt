@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 2.8.3)
 project(ublox_gps)
 find_package(catkin REQUIRED COMPONENTS
   tf
@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
   ublox_serialization
   diagnostic_updater
 )
+catkin_metapackage()
 
 catkin_package(
     INCLUDE_DIRS include
