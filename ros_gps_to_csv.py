@@ -23,48 +23,42 @@ for f in files:
     print f
     bag = rosbag.Bag(f)
     
-    print('fix')
-    csv_fix_name = f[0:-4]+'_fix.csv'
-    csv_fix = open(csv_fix_name,'w')
-    csv_fix.write('bagTime,frameTime,status,lat,lon,covar0,covar4\n')
-  
-    for k, (topic, msg, t) in enumerate(bag.read_messages('/ublox/fix')):
-        if(k==0):
-            t0 = t
-            
-        csv_fix.write('%.9f,%.9f,%d,%.9f,%.9f,%.3f,%.3f\n'
-          % ((t-t0).to_sec(), (msg.header.stamp-t0).to_sec(), msg.status.status,
-              msg.latitude, msg.longitude, msg.position_covariance[0], msg.position_covariance[4] ))
-    csv_fix.close()
+    node_names_list = ['ublox','m8n']
     
-    #print('gps_pose')
-    #csv_gps_pose_name = f[0:-4]+'_gps_pose.csv'
-    #csv_gps_pose = open(csv_gps_pose_name,'w')
-    #csv_gps_pose.write('bagTime,frameTime,x,y\n')
-  
-    #for k, (topic, msg, t) in enumerate(bag.read_messages('/gps_pose')):            
-    #    csv_gps_pose.write('%.9f,%.9f,%.3f,%.3f\n'
-    #      % ((t-t0).to_sec(), (msg.header.stamp-t0).to_sec(), msg.vector.x, msg.vector.y) )
-    #csv_gps_pose.close()
+    for node_name in node_names_list:
     
-    print('gps_vel')
-    csv_gps_vel_name = f[0:-4]+'_gps_vel.csv'
-    csv_gps_vel = open(csv_gps_vel_name,'w')
-    csv_gps_vel.write('bagTime,frameTime,vx,vy\n')
-  
-    for k, (topic, msg, t) in enumerate(bag.read_messages('/ublox/fix_velocity')):            
-        csv_gps_vel.write('%.9f,%.9f,%.3f,%.3f\n'
-          % ((t-t0).to_sec(), (msg.header.stamp-t0).to_sec(), msg.twist.twist.linear.x, msg.twist.twist.linear.y) )
-    csv_gps_vel.close()
-    
-    print('gps_relpose')
-    csv_gps_vel_name = f[0:-4]+'_gps_relpose.csv'
-    csv_gps_vel = open(csv_gps_vel_name,'w')
-    csv_gps_vel.write('bagTime,relE,relN\n')
-  
-    for k, (topic, msg, t) in enumerate(bag.read_messages('/ublox/navrelposned')):            
-        csv_gps_vel.write('%.9f,%.3f,%.3f\n'
-          % ((t-t0).to_sec(), msg.relPosE/100.0, msg.relPosN/100.0) )
-    csv_gps_vel.close()
-    
+        print('fix')
+        csv_fix_name = f[0:-4] + '_' + node_name + '_fix.csv'
+        csv_fix = open(csv_fix_name,'w')
+        csv_fix.write('bagTime,frameTime,status,lat,lon,covar0,covar4\n')
+      
+        for k, (topic, msg, t) in enumerate(bag.read_messages('/' + node_name + '/fix')):
+            if(k==0):
+                t0 = t
+                
+            csv_fix.write('%.9f,%.9f,%d,%.9f,%.9f,%.3f,%.3f\n'
+              % ((t-t0).to_sec(), (msg.header.stamp-t0).to_sec(), msg.status.status,
+                  msg.latitude, msg.longitude, msg.position_covariance[0], msg.position_covariance[4] ))
+        csv_fix.close()
+        
+        print('gps_vel')
+        csv_gps_vel_name = f[0:-4] + '_' + node_name + '_gps_vel.csv'
+        csv_gps_vel = open(csv_gps_vel_name,'w')
+        csv_gps_vel.write('bagTime,frameTime,vx,vy\n')
+      
+        for k, (topic, msg, t) in enumerate(bag.read_messages('/' + node_name + '/fix_velocity')):            
+            csv_gps_vel.write('%.9f,%.9f,%.3f,%.3f\n'
+              % ((t-t0).to_sec(), (msg.header.stamp-t0).to_sec(), msg.twist.twist.linear.x, msg.twist.twist.linear.y) )
+        csv_gps_vel.close()
+        
+        print('gps_relpose')
+        csv_gps_vel_name = f[0:-4] + '_' + node_name + '_gps_relpose.csv'
+        csv_gps_vel = open(csv_gps_vel_name,'w')
+        csv_gps_vel.write('bagTime,relE,relN\n')
+      
+        for k, (topic, msg, t) in enumerate(bag.read_messages('/' + node_name + '/navrelposned')):            
+            csv_gps_vel.write('%.9f,%.3f,%.3f\n'
+              % ((t-t0).to_sec(), msg.relPosE/100.0, msg.relPosN/100.0) )
+        csv_gps_vel.close()
+        
     bag.close()
