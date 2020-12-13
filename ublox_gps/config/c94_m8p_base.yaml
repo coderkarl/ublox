@@ -9,6 +9,8 @@ save:
 
 device: /dev/ttyACM0
 frame_id: gps_base
+
+config_on_startup: false
 dynamic_model: stationary   # Velocity restricted to 0 m/s. Zero dynamics 
                             # assumed.
 fix_mode: auto

@@ -1,0 +1,23 @@
+# Configuration Settings for C94-M8P device
+
+debug: 0                    # Range 0-4 (0 means no debug statements will print)
+
+device: /dev/m8n
+frame_id: gps_m8n
+
+config_on_startup: false
+
+dynamic_model: pedestrian
+
+fix_mode: auto
+
+uart1:
+  baudrate: 9600
+
+gnss:
+  glonass: true
+  sbas: true
+  beidou: true
+
+#sbas:
+#  max: 5

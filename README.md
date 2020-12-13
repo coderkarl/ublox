@@ -3,6 +3,48 @@ The `ublox` package provides support for [u-blox](http://www.u-blox.com) GPS rec
 
 The driver was originally written by Johannes Meyer. Changes made later are detailed in the version history below.
 
+## Wheele Specific
+See the kinetic branch  
+`cd catkin_ws/src/`  
+`git clone https://github.com/coderkarl/ublox.git`  
+`git checkout kinetic`  
+`cd ~/catkin_ws`  
+`catkin_make -j1`  
+
+### udev rules for usb port names
+On wheelepi, see /etc/udev/rules.d/97-usb-serial.rules  
+These symlink definitions came from running:  
+`udevadm info -a -n /dev/ttyUSB0 | grep '{serial}' | head -n1`  
+`udevadm info -a -n /dev/ttyUSB0 | grep '{idVendor}' | head -n1`  
+`udevadm info -a -n /dev/ttyUSB0 | grep '{idProduct}' | head -n1`  
+You need to add one for the ublox c94-m8p rover (m8p_rover). After it is setup (may need to reboot), try:  
+`ll /dev/m8p_rover`  
+
+Update the current gps udev symlink to be m8n (vs GPS_ultimate). This should match the ublox_gps/launch/ublox_m8n.launch  
+
+### launch files
+`roslaunch ublox_gps ublox_device.launch`  
+This will use the ublox_gps/config/c94_m8p_rover.yaml (uses /dev/m8p_rover)  
+I've made it not configure the gps by default now.  
+So it should have the configuration you save from ublox u-center.  
+
+`roslaunch ublox_gps ublox_m8n.launch`  
+
+After launching both, try  
+`rostopic list`  
+`rostopic echo /ublox/fix`  
+`rostopic echo /m8n/fix`  
+`rosbag record -a -O <description>`  
+
+### Bag file to CSV
+`cd <bag directory>`  
+`python ~/catkin_ws/src/ublox/ros_gps_to_csv.py`  
+Once you've compared the m8p rover to the m8n, I would use ublox/navrelposned to view relative x,y from the base station.  
+See ublox/ros_gps_to_csv.py on the kinetic branch.maybe put a py plot in one script just for comparing results quicklyThe py script could pick the lat0, lon0 then transform that to local x,y for both gps units.
+
+### ublox messages
+This is a detailed ublox pdf I found useful for decoding the UBX protocol when viewing ublox ROS messages:[https://www.u-blox.com/sites/default/files/products/documents/u-blox8-M8_ReceiverDescrProtSpec_%28UBX-13003221%29.pdf](https://www.u-blox.com/sites/default/files/products/documents/u-blox8-M8_ReceiverDescrProtSpec_%28UBX-13003221%29.pdf)
+
 ## Options
 
 Example .yaml configuration files are included in `ublox_gps/config`. Consult the u-blox documentation for your device for the recommended settings.
